@@ -1,6 +1,77 @@
 angular.module('app.controllers', [])
   .controller('convertCtrl', ['$scope', function($scope) {
 
+  	var deploy = new Ionic.Deploy();
+
+	// // Update app code with new release from Ionic Deploy
+	// $scope.doUpdate = function() {
+	// 	deploy.update().then(function(res) {
+	// 	  //console.log('Ionic Deploy: Update Success! ', res);
+	// 	}, function(err) {
+	// 	  //console.log('Ionic Deploy: Update error! ', err);
+	// 	}, function(prog) {
+	// 	  //console.log('Ionic Deploy: Progress... ', prog);
+	// 	});
+	// };
+
+	// // Check Ionic Deploy for new code
+	// $scope.checkForUpdates = function() {
+	// 	console.log('Ionic Deploy: Checking for updates');
+	// 	deploy.check().then(function(hasUpdate) {
+	// 	  console.log('Ionic Deploy: Update available: ' + hasUpdate);
+	// 	  $scope.hasUpdate = hasUpdate;
+	// 	  $scope.doUpdate();
+	// 	}, function(err) {
+	// 	  console.error('Ionic Deploy: Unable to check for updates', err);
+	// 	});
+	// };
+	// $scope.update = {
+	// 	hasUpdate : false,
+	// 	msg : ''
+	// };
+
+	$scope.autoUpdate = function(){
+		$scope.updateMsg = "autoUpdate called";
+		deploy.check().then(function(response) {
+		  // response will be true/false
+		  if (response) {
+		  	// $scope.update.hasUpdate = true;
+		  	//$scope.updateMsg = "has update!";
+		  	//console.log("has update!--");
+		    // Download the updates
+		    deploy.download().then(function() {
+		      // Extract the updates
+		      deploy.extract().then(function() {
+		        // Load the updated version
+		        deploy.load();
+		        //console.log("Loading..");
+		        //$scope.updateMsg = "Loading..";
+		      }, function(error) {
+		        // Error extracting
+		      }, function(progress) {
+		        // Do something with the zip extraction progress
+		        //$scope.updateMsg = "Extracted : "+progress+"%";
+		      	//console.log("Extracted : "+progress+"%");
+		      });
+		    }, function(error) {
+		      // Error downloading the updates
+		    }, function(progress) {
+		      // Do something with the download progress
+		      //console.log("Downloaded : "+progress+"%");
+		      //$scope.updateMsg = "Downloaded : "+progress+"%";
+		    });
+		  }
+		  else{
+		  	$scope.updateMsg = "no - updates";
+		  	//console.log("no - updates");
+		  }
+		}, function(error) {
+		  // Error checking for updates
+		  //console.log("error seeking updatees");
+		  $scope.updateMsg = "error seeking updatees";
+		});
+	};
+
   	$scope.range_form = function(attr){
   		if($scope.form.current_conversion.input_type !== undefined){
 	  		if(attr == 'from' && ($scope.form.current_conversion.input_type.from.type == 'range')){
@@ -15,66 +86,7 @@ angular.module('app.controllers', [])
   		else
   			return false;
   	}
-  	// $scope.prepare_form = function(attr){
-
-  	// 	form_type_defined = $scope.form.current_conversion.input_type;
-  	// 	if(form_type_defined != undefined){
-  	// 		form_type_from = form_type_defined.from;
-  	// 		form_type_to = form_type_defined.to;
-
-  	// 		if(attr == 'from_type'){
-  	// 			return form_type_from.type;
-  	// 		}
-  	// 		else if(attr == 'to_type'){
-  	// 			return form_type_to.type;
-  	// 		}
-  	// 		else if(attr == 'from_type_min'){
-  	// 			return form_type_from.min;
-  	// 		}
-  	// 		else if(attr == 'from_type_max'){
-  	// 			return form_type_from.max;
-  	// 		}
-  	// 		else if(attr == 'from_type_step'){
-  	// 			return form_type_from.step;
-  	// 		}
-  	// 		else if(attr == 'to_type_min'){
-  	// 			return form_type_to.min;
-  	// 		}
-  	// 		else if(attr == 'to_type_max'){
-  	// 			return form_type_to.max;
-  	// 		}
-  	// 		else if(attr == 'to_type_step'){
-  	// 			return form_type_to.step;
-  	// 		}
-  	// 		else{
-  	// 			return;
-  	// 		}
-  	// 	}
-  	// 	else{
-  	// 		if(attr == 'from_type'){
-  	// 			return "tel";
-  	// 		}
-  	// 		else if(attr == 'to_type'){
-  	// 			return "tel";
-  	// 		}
-  	// 		// else if(attr == 'from_type_min'){
-  	// 		// 	return;
-  	// 		// }
-  	// 		// else if(attr == 'from_type_max'){
-  	// 		// 	return;
-  	// 		// }
-  	// 		// else if(attr == 'to_type_min'){
-  	// 		// 	return;
-  	// 		// }
-  	// 		// else if(attr == 'to_type_max'){
-  	// 		// 	return;
-  	// 		// }
-  	// 		else{
-  	// 			return;
-  	// 		}
-  	// 	}
-  	// }
-
+  	
   	$scope.prepare_form = function(attr, conv_unit){
 
   		current_conv = $scope.form.current_conversion;
@@ -85,8 +97,8 @@ angular.module('app.controllers', [])
   		conv_type_obj = $scope.conversions[current_conv_type];
   		conv_unit_obj = conv_type_obj[conv_unit];
 
-  		console.log("attr:"+attr+"conv_unit:"+conv_unit)
-  		console.log(conv_unit_obj)
+  		//console.log("attr:"+attr+"conv_unit:"+conv_unit)
+  		//console.log(conv_unit_obj)
 		if(attr == 'min'){
 			if(conv_unit_obj.min !== undefined)
 				ret = conv_unit_obj.min
@@ -108,7 +120,7 @@ angular.module('app.controllers', [])
 		else{
 			ret = null;
 		}
-		console.log(ret);
+		//console.log(ret);
 		return ret;
   	}
 
@@ -269,6 +281,69 @@ angular.module('app.controllers', [])
 					min: '0',
 					max: '100',
 					step: '1'
+				}
+			}
+		},
+		{
+			id: "pressure",
+			name: "Pressure",
+			in: 1,
+			from: {
+				name: "Atmosphere",
+				id: "atm"
+			},
+			to: {
+				name: "bar",
+				id: "b"
+			},
+			units: [
+				{
+			      name: "Atmosphere",
+			      id: "atm"
+			    },
+			    {
+			      name: "bar",
+			      id: "b"
+			    },
+			    {
+			      name: "dynes/cm2",
+			      id: "dcm"
+			    },
+			    {
+			      name: "in. Hg",
+			      id: "ihg"
+			    },
+			    {
+			      name: "in. water",
+			      id: "iw"
+			    },
+			    {
+			      name: "kg/cm2",
+			      id: "k"
+			    },
+			    {
+			      name: "mbar",
+			      id: "m"
+			    },
+			    {
+			      name: "mtorr or micron",
+			      id: "mtm"
+			    },
+			    {
+			      name: "Pa or N/m2",
+			      id: "pnm"
+			    },
+			    {
+			      name: "PSI or lb/in2",
+			      id: "psi"
+			    }
+			],
+			input_type: {
+				from: {
+					type: 'tel'
+				},
+				to: {
+					type: 'tel'
 				}
 			}
 		},
@@ -1348,6 +1423,58 @@ angular.module('app.controllers', [])
 				"name": "Kelvin"
 			}
 		},
+		"pressure": {
+			"atm": {
+				"scale": 1/0.986923,
+				"symbol": "",
+				"name": "Atmosphere"
+			},
+			"b": {
+				"scale": 1,
+				"symbol": "",
+				"name": "bar"
+			},
+			"dcm": {
+				"scale": 1/1000000,
+				"symbol": "",
+				"name": "dynes/cm2"
+			},
+			"ihg": {
+				"scale": 1/29.9213,
+				"symbol": "",
+				"name": "in. Hg"
+			},
+			"iw": {
+				"scale": 1/401.46307866999996,
+				"symbol": "",
+				"name": "in. water"
+			},
+			"k": {
+				"scale": 1/1.019716213,
+				"symbol": "",
+				"name": "kg/cm2"
+			},
+			"m": {
+				"scale": 1/1000,
+				"symbol": "",
+				"name": "mbar"
+			},
+			"mtm": {
+				"scale": 1/750061.673821,
+				"symbol": "",
+				"name": "mtorr or micron"
+			},
+			"pnm": {
+				"scale": 1/100000,
+				"symbol": "",
+				"name": "Pa or N/m2"
+			},
+			"psi": {
+				"scale": 1/14.50377,
+				"symbol": "",
+				"name": "PSI or lb/in2"
+			}
+		},
 		"length": {
 			"kilometer": {
 				"scale": 1000,
@@ -2219,8 +2346,31 @@ angular.module('app.controllers', [])
 		}
 	};
 
+	$scope.getFromLocal = function(key, json){
+		console.log("Called"+key+json);
+		if(json === undefined){
+			return window.localStorage[key];
+		}else{
+			if(window.localStorage[key] !== undefined){
+				return JSON.parse(window.localStorage[key]);
+			}else{
+				return undefined;
+			}
+		}
+	};
+
+	$scope.setToLocal = function(key, value, json){
+		console.log('calle'+key+value+json);
+		if(json === undefined){
+			window.localStorage[key] = value;
+		}else{
+			window.localStorage[key] = JSON.stringify(value);
+		}
+	};
+	//$scope.from_local = window.localStorage['current_conversion'];
+
 	$scope.form = {
-		current_conversion : $scope.conversion_types[1]
+		current_conversion : ($scope.getFromLocal('current_conversion', true) || $scope.conversion_types[0])
 	};
 
 	/**
@@ -2278,23 +2428,43 @@ angular.module('app.controllers', [])
 
 		//Convert "From" units to base unit of category ie. celcius to Kelvin
 		if ($scope.isNumber(oneUnitFrom.scale)) {
+			// console.log("oneUnitFrom")
+			// console.log(oneUnitFrom)
+			// console.log(",oneUnitTo")
+			// console.log(oneUnitTo)
+			// console.log(",scale:")
+			// console.log(oneUnitFrom.scale)
+			//console.log(",value before1:")
+			//console.log(value)
+			//console.log(oneUnitFrom)
 			value = value * oneUnitFrom.scale;
+			//console.log(",value after1:")
+			//console.log(value)
 		} else {
 			value = oneUnitFrom.scale(value);
 		}
 
 		//Next Convert into "To" units from the base unit of category ie. kelvin to fahrenheit
 		if ($scope.isNumber(oneUnitTo.scale)) {
+			//console.log("oneUnitFrom"+oneUnitFrom+",oneUnitTo"+oneUnitTo+",scale:"+oneUnitFrom.scale+",value:"+value)
+			//console.log(",value bef 2:")
+			//console.log(value)
+			//console.log(oneUnitTo)
 			value = value / oneUnitTo.scale;
+			//console.log("afterconversion:"+value)
 		} else {
 			value = oneUnitTo.scaleFrom(value);
+		}
+		if($scope.oneUnitTo.decimal !== undefined){
+			value = $scope.roundIt(value, $scope.oneUnitTo.decimal);
 		}
 		return value;
 	}
 
 	$scope.$watch('form.current_conversion.in', function(newValue, oldValue) {
+	  $scope.setToLocal('current_conversion', $scope.form.current_conversion, true)
 	  // access new and old value here
-	  console.log("Your former user.name was "+oldValue+", you're current user name is "+newValue+".");
+	  //console.log("Your former user.name was "+oldValue+", you're current user name is "+newValue+".");
 	  if(newValue == undefined){
 	  // 	$scope.form.current_conversion.input_type = {
 	  // 		from: {
@@ -2311,6 +2481,7 @@ angular.module('app.controllers', [])
 			// 	}
 			// };
 	  	//$scope.form.current_conversion.input_type.from.min = 0;
+	  	//window.localStorage['current_conversion'] = JSON.stringify($scope.form.current_conversion);
 	  	$scope.form.current_conversion.in = 0;
 	  	$scope.reCal('in');
 	  }
@@ -2336,7 +2507,7 @@ angular.module('app.controllers', [])
     };
 
     $scope.exists = function(obj, key) {
-	    console.log(obj);
+	    //console.log(obj);
 	    if (typeof obj !== "undefined" && obj !== null)
 	        return obj;
 	    return 0; // Maybe you'd want undefined instead

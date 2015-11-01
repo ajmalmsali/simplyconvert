@@ -1,4 +1,9 @@
-angular.module('app', ['ionic', 'app.controllers', 'app.routes'])
+angular.module('app', ['ionic', 'ionic.service.core', 'ionic.service.analytics', 'app.controllers', 'app.routes'])
+.run(function($ionicPlatform, $ionicAnalytics) {
+  $ionicPlatform.ready(function() {
+    $ionicAnalytics.register();
+  });
+})
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

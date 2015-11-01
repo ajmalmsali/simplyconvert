@@ -1,4 +1,4 @@
-<ion-view title="SimplyConvert" ng-controller="convertCtrl">  
+<ion-view title="InstaConvert" ng-controller="convertCtrl" data-ng-init="autoUpdate()">  
     <ion-content padding="true" scroll="false" class="has-header has-footer">
         <form class="list">
             <ion-list>
@@ -43,7 +43,6 @@
                     <select data-ng-model="form.current_conversion.to" data-ng-change="reCal('in')" data-ng-options="option.name for option in form.current_conversion.units track by option.id">
                     </select>
                 </label>
-
             </ion-list>
         </form>
     </ion-content>
