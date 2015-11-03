@@ -3,40 +3,12 @@ angular.module('app.controllers', [])
 
   	var deploy = new Ionic.Deploy();
 
-	// // Update app code with new release from Ionic Deploy
-	// $scope.doUpdate = function() {
-	// 	deploy.update().then(function(res) {
-	// 	  //console.log('Ionic Deploy: Update Success! ', res);
-	// 	}, function(err) {
-	// 	  //console.log('Ionic Deploy: Update error! ', err);
-	// 	}, function(prog) {
-	// 	  //console.log('Ionic Deploy: Progress... ', prog);
-	// 	});
-	// };
-
-	// // Check Ionic Deploy for new code
-	// $scope.checkForUpdates = function() {
-	// 	console.log('Ionic Deploy: Checking for updates');
-	// 	deploy.check().then(function(hasUpdate) {
-	// 	  console.log('Ionic Deploy: Update available: ' + hasUpdate);
-	// 	  $scope.hasUpdate = hasUpdate;
-	// 	  $scope.doUpdate();
-	// 	}, function(err) {
-	// 	  console.error('Ionic Deploy: Unable to check for updates', err);
-	// 	});
-	// };
-	// $scope.update = {
-	// 	hasUpdate : false,
-	// 	msg : ''
-	// };
-
+  	deploy.setChannel("alpha");
 	$scope.autoUpdate = function(){
 		$scope.updateMsg = "autoUpdate called";
 		deploy.check().then(function(response) {
 		  // response will be true/false
 		  if (response) {
-		  	// $scope.update.hasUpdate = true;
-		  	//$scope.updateMsg = "has update!";
 		  	//console.log("has update!--");
 		    // Download the updates
 		    deploy.download().then(function() {
@@ -45,12 +17,10 @@ angular.module('app.controllers', [])
 		        // Load the updated version
 		        deploy.load();
 		        //console.log("Loading..");
-		        //$scope.updateMsg = "Loading..";
 		      }, function(error) {
 		        // Error extracting
 		      }, function(progress) {
 		        // Do something with the zip extraction progress
-		        //$scope.updateMsg = "Extracted : "+progress+"%";
 		      	//console.log("Extracted : "+progress+"%");
 		      });
 		    }, function(error) {
@@ -58,7 +28,6 @@ angular.module('app.controllers', [])
 		    }, function(progress) {
 		      // Do something with the download progress
 		      //console.log("Downloaded : "+progress+"%");
-		      //$scope.updateMsg = "Downloaded : "+progress+"%";
 		    });
 		  }
 		  else{
@@ -97,8 +66,6 @@ angular.module('app.controllers', [])
   		conv_type_obj = $scope.conversions[current_conv_type];
   		conv_unit_obj = conv_type_obj[conv_unit];
 
-  		//console.log("attr:"+attr+"conv_unit:"+conv_unit)
-  		//console.log(conv_unit_obj)
 		if(attr == 'min'){
 			if(conv_unit_obj.min !== undefined)
 				ret = conv_unit_obj.min
@@ -332,6 +299,10 @@ angular.module('app.controllers', [])
 			    {
 			      name: "Pa or N/m2",
 			      id: "pnm"
+			    },
+			    {
+			      name: "KPa",
+			      id: "kpa"
 			    },
 			    {
 			      name: "PSI or lb/in2",
@@ -1324,7 +1295,8 @@ angular.module('app.controllers', [])
 				"name": "%",
 				"min": "0",
 				"max": "100",
-				"step": "1"
+				"step": "1",
+				"decimal": 2
 			}
 		},
 		"3_15psi": {
@@ -1347,7 +1319,8 @@ angular.module('app.controllers', [])
 				"name": "%",
 				"min": "0",
 				"max": "100",
-				"step": "1"
+				"step": "1",
+				"decimal": 2
 			}
 		},
 		"0_20ma": {
@@ -1370,7 +1343,8 @@ angular.module('app.controllers', [])
 				"name": "%",
 				"min": "0",
 				"max": "100",
-				"step": "1"
+				"step": "1",
+				"decimal": 2
 			}
 		},
 		"0_25ma": {
@@ -1393,7 +1367,8 @@ angular.module('app.controllers', [])
 				"name": "%",
 				"min": "0",
 				"max": "100",
-				"step": "1"
+				"step": "1",
+				"decimal": 2
 			}
 		},
 		"temperature": {
@@ -1468,6 +1443,11 @@ angular.module('app.controllers', [])
 				"scale": 1/100000,
 				"symbol": "",
 				"name": "Pa or N/m2"
+			},
+			"kpa": {
+				"scale": 1/100,
+				"symbol": "",
+				"name": "KPa"
 			},
 			"psi": {
 				"scale": 1/14.50377,
@@ -2428,35 +2408,19 @@ angular.module('app.controllers', [])
 
 		//Convert "From" units to base unit of category ie. celcius to Kelvin
 		if ($scope.isNumber(oneUnitFrom.scale)) {
-			// console.log("oneUnitFrom")
-			// console.log(oneUnitFrom)
-			// console.log(",oneUnitTo")
-			// console.log(oneUnitTo)
-			// console.log(",scale:")
-			// console.log(oneUnitFrom.scale)
-			//console.log(",value before1:")
-			//console.log(value)
-			//console.log(oneUnitFrom)
 			value = value * oneUnitFrom.scale;
-			//console.log(",value after1:")
-			//console.log(value)
 		} else {
 			value = oneUnitFrom.scale(value);
 		}
 
 		//Next Convert into "To" units from the base unit of category ie. kelvin to fahrenheit
 		if ($scope.isNumber(oneUnitTo.scale)) {
-			//console.log("oneUnitFrom"+oneUnitFrom+",oneUnitTo"+oneUnitTo+",scale:"+oneUnitFrom.scale+",value:"+value)
-			//console.log(",value bef 2:")
-			//console.log(value)
-			//console.log(oneUnitTo)
 			value = value / oneUnitTo.scale;
-			//console.log("afterconversion:"+value)
 		} else {
 			value = oneUnitTo.scaleFrom(value);
 		}
-		if($scope.oneUnitTo.decimal !== undefined){
-			value = $scope.roundIt(value, $scope.oneUnitTo.decimal);
+		if(oneUnitTo.decimal !== undefined){
+			value = $scope.roundIt(value, oneUnitTo.decimal);
 		}
 		return value;
 	}
@@ -2464,27 +2428,10 @@ angular.module('app.controllers', [])
 	$scope.$watch('form.current_conversion.in', function(newValue, oldValue) {
 	  $scope.setToLocal('current_conversion', $scope.form.current_conversion, true)
 	  // access new and old value here
-	  //console.log("Your former user.name was "+oldValue+", you're current user name is "+newValue+".");
-	  if(newValue == undefined){
-	  // 	$scope.form.current_conversion.input_type = {
-	  // 		from: {
-			// 		type: 'number',
-			// 		min: '0',
-			// 		max: '0',
-			// 		step: undefined
-			// 	},
-			// to: {
-			// 		type: 'number',
-			// 		min: undefined,
-			// 		max: undefined,
-			// 		step: undefined
-			// 	}
-			// };
-	  	//$scope.form.current_conversion.input_type.from.min = 0;
-	  	//window.localStorage['current_conversion'] = JSON.stringify($scope.form.current_conversion);
-	  	$scope.form.current_conversion.in = 0;
-	  	$scope.reCal('in');
-	  }
+		if(newValue == undefined){
+	  		$scope.form.current_conversion.in = 0;
+	  		$scope.reCal('in');
+	  	}
 	});
 
 	$scope.reCal = function(in_out) {
@@ -2507,7 +2454,6 @@ angular.module('app.controllers', [])
     };
 
     $scope.exists = function(obj, key) {
-	    //console.log(obj);
 	    if (typeof obj !== "undefined" && obj !== null)
 	        return obj;
 	    return 0; // Maybe you'd want undefined instead
