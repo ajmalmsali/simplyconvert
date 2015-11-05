@@ -11,11 +11,11 @@
             <div class="spacer" style="width: 300px; height: 10px;">
             </div>
             <ion-list>
-                <label class="item item-input" data-ng-show="form.current_conversion.input_type.from.type != 'range'">
+                <label class="item item-input" data-ng-show="form.current_conversion.input_type.from.type == 'tel'">
                     <span class="input-label"></span>
                     <input type="tel" data-ng-model="form.current_conversion.in" data-ng-change="reCal('in')">
                 </label>
-                <label class="item item-input" data-ng-hide="form.current_conversion.input_type.from.type != 'range'">
+                <label class="item item-input" data-ng-show="form.current_conversion.input_type.from.type == 'range'">
                     <span class="input-label" data-ng-bind-template="{{ form.current_conversion.in }} {{ form.current_conversion.from.name }}"></span>
                     <input type="range" data-ng-model="form.current_conversion.in" data-ng-change="reCal('in')" min="{{ prepare_form('min', form.current_conversion.from.id) }}" max="{{ prepare_form('max', form.current_conversion.from.id) }}">
                 </label>
@@ -29,11 +29,11 @@
             <div class="spacer" style="width: 300px; height: 12px;">
             </div>
             <ion-list>
-                <label class="item item-input" data-ng-show="form.current_conversion.input_type.to.type != 'range'">
+                <label class="item item-input" data-ng-show="form.current_conversion.input_type.to.type == 'tel'">
                     <span class="input-label"></span>
                     <input type="tel" data-ng-model="form.current_conversion.out" data-ng-change="reCal('out')">
                 </label>
-                <label class="item item-input" data-ng-hide="form.current_conversion.input_type.to.type != 'range'">
+                <label class="item item-input" data-ng-show="form.current_conversion.input_type.to.type == 'range'">
                     <span class="input-label"  data-ng-bind-template="{{ form.current_conversion.out }} {{ form.current_conversion.to.name }}"></span>
                     <input type="range" data-ng-model="form.current_conversion.out" data-ng-change="reCal('out')" min="{{ prepare_form('min', form.current_conversion.to.id) }}" max="{{ prepare_form('max', form.current_conversion.to.id) }}">
                 </label>
